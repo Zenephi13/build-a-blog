@@ -60,17 +60,32 @@ class NewPost(Handler):
         if (body and title):
             blog = Blog(title = title, body = body)
             blog.put()
-            #self.write("Blog posted!")
             self.redirect('/blog')
 
         else:
             error = "Blog title and body required."
             self.render_newpost(title, body, error)
-            #self.renderError(400)
+
+
+class ViewPost(webapp2.RequestHandler):
+
+    def get(self, id, error = ""):
+        blog = Blog.get_by_id(int(id))
+        t = jinja_env.get_template("blog.html")
+
+        if not blog:
+            error = "No blog of that ID."
+            content = t.render(blogs = blog, error = error)
+
+        else:
+            content = t.render(blogs = blog)
+        
+        self.response.write(content)
 
 
 app = webapp2.WSGIApplication([
     ('/', Handler),
     ('/newpost', NewPost),
-    ('/blog', ViewBlogs)
+    ('/blog', ViewBlogs),
+    webapp2.Route('/blog/<id:\d+>', ViewPost)
 ], debug=True)

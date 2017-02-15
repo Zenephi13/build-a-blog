@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="post">
+<form action="/newpost" method="post" class="blog">
     <label>
         <div>Title</div>
-        <input type="text" name="title">
+        <input type="text" class="blog-title" name="title" value="{{ title }}"/>
     </label>
 
     <label>
-        <div>Blog</div>
-        <textarea name="blog"></textarea>
+        <div>Body</div>
+        <textarea class="blog-body" name="body">{{ body }}</textarea>
     </label>
+    <div class="error" name="error">{{ error }}</div>
+    <input type="submit"/>
+</form>
 {% endblock %}

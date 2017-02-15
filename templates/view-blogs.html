@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Recent Blog Posts</h2>
+
+{% for blog in blogs %}
+<div class="blog">
+    <div class="blog-title">{{ blog.title }}</div>
+    <pre class="blog-body">{{ blog.body }}</pre>
+</div>
+{% endfor %}   
+
+{% endblock %}

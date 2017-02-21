@@ -7,9 +7,10 @@
 {% for blog in blogs %}
 <hr>
 <div class="blog">
-    <div class="blog-title">{{ blog.title }}</div>
+    <a class="blog-title" href="/blog/{{ blog.key().id() }}">{{ blog.title }}</a>
     <pre class="blog-body">{{ blog.body }}</pre>
 </div>
+<div class="error" name="error">{{ error }}</div>
 {% endfor %}   
 
 {% endblock %}

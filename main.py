@@ -33,13 +33,14 @@ class Handler(webapp2.RequestHandler):
 
 class ViewBlogs(Handler):
 
-    def render_view_blogs(self, blogs = ""):
+    def render_view_blogs(self):
         blog_posts = db.GqlQuery("SELECT * FROM Blog ORDER BY created DESC LIMIT 5")
         t = jinja_env.get_template("blog.html")
         content = t.render(blogs = blog_posts)
-        self.response.write(content)
+        self.response.out.write(content)
 
     def get(self):
+        
         self.render_view_blogs()
 
 
@@ -48,7 +49,7 @@ class NewPost(Handler):
     def render_newpost(self, title = "", body = "", error = ""):
         t = jinja_env.get_template("newpost.html")
         content = t.render(title = title, body = body, error = error)
-        self.response.write(content)
+        self.response.out.write(content)
 
     def get(self):
         self.render_newpost()
@@ -60,7 +61,9 @@ class NewPost(Handler):
         if (body and title):
             blog = Blog(title = title, body = body)
             blog.put()
-            self.redirect('/blog')
+            blog_id = blog.key().id()
+
+            self.redirect('/blog/%s' % blog_id)
 
         else:
             error = "Blog title and body required."
@@ -69,18 +72,19 @@ class NewPost(Handler):
 
 class ViewPost(webapp2.RequestHandler):
 
-    def get(self, id, error = ""):
+    def get(self, id):
         blog = Blog.get_by_id(int(id))
-        t = jinja_env.get_template("blog.html")
-
-        if not blog:
-            error = "No blog of that ID."
-            content = t.render(blogs = blog, error = error)
+        
+        if blog:
+            t = jinja_env.get_template("blog.html")
+            content = t.render(blogs = [blog])
 
         else:
-            content = t.render(blogs = blog)
+            error = "No blog with ID %s." % id
+            t = jinja_env.get_template("blog.html")
+            content = t.render(error = error)
         
-        self.response.write(content)
+        self.response.out.write(content)
 
 
 app = webapp2.WSGIApplication([
